@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <SoftwareSerial.h>
-
+#include <font_6x12.h>
 #if 0
 #define DBG(...) if(dbg) {dbg->print("["); dbg->print(__FUNCTION__); dbg->print("(): "); dbg->print(__LINE__); dbg->print(" ] "); dbg->println(__VA_ARGS__);}
 #else
@@ -24,7 +24,7 @@
 
 
 extern Stream *dbg;
-extern const unsigned char font6_12[(0x7E - 0x20 + 1)*12];
+//extern const unsigned char font6_12[(0x7E - 0x20 + 1)*12];
 typedef struct{
     uint8_t head1;
     uint8_t head2;
