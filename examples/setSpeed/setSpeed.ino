@@ -28,6 +28,7 @@ void setup() {
     Serial1.begin(19200);
     screen.begin(Serial1);
     screen.setDbgSerial(Serial);
+    screen.disString(eMove_left,eColor_red,"DFROBOT",strlen("DFROBOT"));
     /*Set the displayed moving speed level*/
     /*eBrightLevel_t: eSpeedLevel_1 = Speed class 1
                       eSpeedLevel_2 = Speed class 2
@@ -39,8 +40,12 @@ void setup() {
                       eSpeedLevel_8 = Speed class 8
     */
     screen.setMoveSpeed(eSpeedLevel_1);
+
 }
 
 void loop() {
-
+    screen.setMoveSpeed(eSpeedLevel_1);
+    delay(5000);
+    screen.setMoveSpeed(eSpeedLevel_8);
+    delay(5000);
 }
