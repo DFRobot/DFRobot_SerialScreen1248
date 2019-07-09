@@ -25,6 +25,7 @@ The library makes it easy to configure the sensor via Serial<br>
 ## Feature
 1. Support soft and hard serial communication, baud rate 19200
 2. Support Chinese display.
+3. Support string display
 
 # Installation
 
@@ -98,7 +99,7 @@ bool setBrightness(eBrightLevel_t b_);
  */
 
 /*!
- * @brief Display character
+ * @brief Display Chinese characters.
  *
  * @param m_  Direction of movement
  *    eMove_left : Move to the left
@@ -120,6 +121,30 @@ bool setBrightness(eBrightLevel_t b_);
  * @return  true if execute successfully, false otherwise.
  */
 bool disChiCharacter(eMoveMode_t m_, eColorMode_t c_,const unsigned char *message_, uint16_t len_);
+
+/*!
+ * @brief Display string.
+ *
+ * @param m_  Direction of movement
+ *    eMove_left : Move to the left
+ *    eMove_right : Move to the right
+ *    eMove_hold : hold
+ *    eMove_up : Move to the up
+ *    eMove_down : Move to the down
+ *    eMove_flash : flicker
+ * @param c_  font color
+ *    eColor_red : red
+ *    eColor_yellow : yellow
+ *    eColor_green : green
+ *    eColor_cyan : cyan
+ *    eColor_blue : blue
+ *    eColor_purple : purple
+ *    eColor_white : white
+ * @param message_  
+ * @param len_   length of message_
+ * @return  true if execute successfully, false otherwise.
+ */
+bool disString(eMoveMode_t m_, eColorMode_t c_,const unsigned char *message_, uint16_t len_);
 
 /*!
  * @brief Full screen lights up to show a certain color

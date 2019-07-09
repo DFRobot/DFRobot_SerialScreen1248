@@ -24,7 +24,7 @@ bool DFRobot_SerialScreen1248::powerOn(){
     sendPacket(header);
     DBG("payload:");DBG((const char *)header->payload);
     free(header);
-	bootFlag = true;
+    bootFlag = true;
     return true;
 }
 
@@ -40,7 +40,7 @@ bool DFRobot_SerialScreen1248::shutDown(){
     sendPacket(header);
     DBG("payload:");DBG((const char *)header->payload);
     free(header);
-	bootFlag = false;
+    bootFlag = false;
     return true;
 }
 
@@ -49,7 +49,6 @@ bool DFRobot_SerialScreen1248::DFRobot_SerialScreen1248::begin(Stream &s_){
     if(s == NULL){
         return false;
     }
-    //setMessage("DFRobot");
     return true;
 }
 
@@ -95,7 +94,7 @@ bool DFRobot_SerialScreen1248::setMoveSpeed(eSpeedLevel_t s_){
     return true;
 }
 bool DFRobot_SerialScreen1248::disChiCharacter(eMoveMode_t m_, eColorMode_t c_, const unsigned char *message_, uint16_t len_){
-    if(len_ < 0){
+    if(len_ < 1){
         return false;
     }
     if(len_ > BUFSIZE){
@@ -104,7 +103,7 @@ bool DFRobot_SerialScreen1248::disChiCharacter(eMoveMode_t m_, eColorMode_t c_, 
     if(!bootFlag){
         powerOn();
     }
-    uint16_t len;
+    uint16_t len = 0;
     moveMode = m_;
     color = c_;
     sig_H = (len_/12)*8;
@@ -131,6 +130,34 @@ bool DFRobot_SerialScreen1248::disChiCharacter(eMoveMode_t m_, eColorMode_t c_, 
     mess[len-2] = getCs(mess, len);
     mess[len-1] = '\0';
     sendMessage(mess, len);
+    return true;
+}
+bool DFRobot_SerialScreen1248::disString(eMoveMode_t m_, eColorMode_t c_,const unsigned char *message_, uint16_t len_){
+    if(len_ < 1){
+        return false;
+    }
+    if(len_ > 42){
+        len_ = 42;
+    }
+    length = len_;
+    offset = 0;
+    unsigned char s[length];
+    unsigned char mess[50];
+    memset(sendBuf, 0, sizeof(sendBuf));
+    memset(mess, 0, sizeof(mess));
+    memcpy(mess, message_, length);
+    for(uint16_t n = 0; n < FONTSIZE; n++){
+        offset = n;
+        for(uint16_t i = 0; i < len_; i++){
+            s[i] = findCharacter(mess[i]);
+        }
+        conversion(s, len_);
+        memcpy((sendBuf+(n*length)), s, length);
+        memset(s, 0, len_);
+    }
+    offset = 0;
+    disChiCharacter(m_, c_, sendBuf, length*FONTSIZE);
+    length = 0;
     return true;
 }
 
@@ -196,8 +223,6 @@ uint8_t DFRobot_SerialScreen1248::getCs(char *m_, uint16_t len_){
 bool DFRobot_SerialScreen1248::firstFrameData(){
     char mess[40-sizeof(sPacketHeader_t)] = {0x0C, 0x00, (char)sig_H, (char)priColor, (char)list, 0x00, (char)moveMode};
     memset(mess+7, 0x00, sizeof(mess)-7);
-    Serial.println(sizeof(mess));
-    Serial.println(40-sizeof(sPacketHeader_t));
     pPacketHeader_t header = packed(TYPE_DATA, mess, sizeof(mess));
     if(header == NULL){
         DBG("Memory ERROR!");
@@ -222,4 +247,40 @@ void DFRobot_SerialScreen1248::sendPacket(pPacketHeader_t header){
 void DFRobot_SerialScreen1248::sendMessage(char *m_, uint16_t len_){
     s->write((uint8_t *)m_, len_);
     delay(100);
+}
+
+unsigned char DFRobot_SerialScreen1248::findCharacter(char c_){
+    if(c_ < 0x20 || c_ > 0x7E){
+        return false;
+    }
+    uint16_t index = ((c_ - 0x20)*FONTSIZE);
+    return font6_12[index+offset];
+}
+
+void DFRobot_SerialScreen1248::conversion(unsigned char *s_, uint16_t len_){
+    unsigned char mess[len_];
+    memcpy(mess, s_, len_);
+    uint16_t n = 0;
+    if((len_*FONTWIDTH)%FONTBYTE == 0){
+        n = (len_*FONTWIDTH)/FONTBYTE;
+    }else{
+        n = (len_*FONTWIDTH)/FONTBYTE + 1;
+    }
+    for(uint16_t i = 1; i <= n; i++){
+        uint16_t indexStart = (i-1)*FONTBYTE;
+        uint16_t indexEnd = i*FONTBYTE;
+        uint16_t index = 1;
+        for(uint16_t j = index; j <= len_; j++){
+            if(((((j - 1) * FONTWIDTH) <= indexStart) &&(j*FONTWIDTH > indexStart))){
+                mess[i-1] = (mess[j-1] << (FONTWIDTH-(j*FONTWIDTH - indexStart)));
+            }
+            if(((((j - 1) * FONTWIDTH) < indexEnd) &&(j*FONTWIDTH >= indexEnd))){
+                mess[i-1] |= (mess[j-1] >> (FONTBYTE - (indexEnd - ((j - 1) * FONTWIDTH))));
+                index = j;
+                break;
+            }
+        }
+    }
+    memcpy(s_, mess, n);
+    length = n;
 }

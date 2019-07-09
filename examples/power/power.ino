@@ -28,8 +28,10 @@ void setup() {
     screen.setDbgSerial(Serial);
     delay(1000);
     screen.shutDown();      //shut down
+    Serial.println("SHUT DOWN!");
     delay(5000);
     screen.powerOn();   //power ON
+    Serial.println("POWER ON");
 }
 
 void loop() {

@@ -18,11 +18,13 @@
 #define TYPE_LIST         0X04
 #define TYPE_SPEED        0X05
 #define TYPE_BRIGHT       0x06
-
+#define FONTSIZE          12
+#define FONTWIDTH         6
+#define FONTBYTE          8
 
 
 extern Stream *dbg;
-
+extern const unsigned char font6_12[(0x7E - 0x20 + 1)*12];
 typedef struct{
     uint8_t head1;
     uint8_t head2;
@@ -100,6 +102,7 @@ public:
     bool setBrightness(eBrightLevel_t b_);
     bool setMoveSpeed(eSpeedLevel_t s_);
     bool disChiCharacter(eMoveMode_t m_, eColorMode_t c_,const unsigned char *message_, uint16_t len_);
+    bool disString(eMoveMode_t m_, eColorMode_t c_,const unsigned char *message_, uint16_t len_);
     void setFullScreenColor(eColorMode_t color_);
 protected:
     pPacketHeader_t packed(uint8_t type, const char *pay_, uint16_t len);
@@ -108,6 +111,8 @@ protected:
     bool firstFrameData();
     void sendPacket(pPacketHeader_t header);
     void sendMessage(char *m_, uint16_t len_);
+    unsigned char findCharacter(char c_);
+    void conversion(unsigned char *s_, uint16_t len_);
 private:
     Stream *s;
     bool bootFlag = true;  //false: shut down  true:booted
@@ -119,5 +124,6 @@ private:
     eMoveMode_t moveMode = eMove_hold;
     eColorMode_t color = eColor_blue;
     unsigned char sendBuf[BUFSIZE];
+    uint16_t offset = 0;
 };
 #endif

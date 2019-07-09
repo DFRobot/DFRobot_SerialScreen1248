@@ -6,7 +6,7 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-DFRobot_SerialScreen1248			KEYWORD1
+DFRobot_SerialScreen771			KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
