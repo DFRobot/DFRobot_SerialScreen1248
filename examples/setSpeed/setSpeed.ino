@@ -28,6 +28,21 @@ void setup() {
     Serial1.begin(19200);
     screen.begin(Serial1);
     screen.setDbgSerial(Serial);
+    /*eMoveMode_t:   eMove_left = left
+                     eMove_right = right
+                     eMove_hold = hold
+                     eMove_down = down
+                     eMove_up = up
+                     eMove_flash = flash
+                     eMove_marquee = marquee
+	  eColorMode_t:  eColor_red = red
+                     eColor_yellow = yellow
+                     eColor_green = green
+                     eColor_cyan = cyan
+                     eColor_blue = blue
+                     eColor_purple = purple
+                     eColor_white = white
+    */
     screen.disString(eMove_left,eColor_red,"DFROBOT",strlen("DFROBOT"));
     /*Set the displayed moving speed level*/
     /*eBrightLevel_t: eSpeedLevel_1 = Speed class 1
