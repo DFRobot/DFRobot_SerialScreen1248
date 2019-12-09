@@ -21,10 +21,19 @@
 #define FONTSIZE          12
 #define FONTWIDTH         6
 #define FONTBYTE          8
+#ifndef pgm_read_byte
+ #define pgm_read_byte(addr)  (*(const unsigned char *)(addr))
+#endif
+#ifndef pgm_read_word
+ #define pgm_read_word(addr)  (*(const unsigned short *)(addr))
+#endif
+#ifndef pgm_read_dword
+ #define pgm_read_dword(addr)  (*(const unsigned long *)(addr))
+#endif
 
 
 extern Stream *dbg;
-//extern const unsigned char font6_12[(0x7E - 0x20 + 1)*12];
+
 typedef struct{
     uint8_t head1;
     uint8_t head2;

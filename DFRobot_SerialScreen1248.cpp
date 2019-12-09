@@ -254,7 +254,7 @@ unsigned char DFRobot_SerialScreen1248::findCharacter(char c_){
         return false;
     }
     uint16_t index = ((c_ - 0x20)*FONTSIZE);
-    return font6_12[index+offset];
+    return pgm_read_byte(font6_12+index+offset);
 }
 
 void DFRobot_SerialScreen1248::conversion(unsigned char *s_, uint16_t len_){
